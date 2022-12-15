@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "plantlog"
+version = "0.1.0"
+description = "Event logger for your plants"
+authors = ["Alexandra Ryabinina <aoryabinina@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.88.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
