@@ -25,3 +25,8 @@ def read_root():
 @app.get('/users')
 def read_users(db: Session = Depends(get_db)):
     return db.query(models.User).all()
+
+
+@app.get('/events')
+def read_events(db: Session = Depends(get_db)):
+    return db.query(models.Event).all()

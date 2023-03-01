@@ -7,8 +7,9 @@ from alembic import context
 
 import os
 
-from src.db import models
-from src.db.database import metadata
+from src.db.models import *
+from src.db.models import Base
+
 
 
 # this is the Alembic Config object, which provides
@@ -24,7 +25,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-target_metadata = metadata
+target_metadata = Base.metadata
 # target_metadata = None
 
 # other values from the config, defined by the needs of env.py,
