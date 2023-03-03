@@ -1,9 +1,11 @@
-from fastapi import Depends, FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+import typing as t
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from . import schemas
 from .db import models
-from .db.database import SessionLocal, engine
+from .db.database import database, engine
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -21,24 +23,24 @@ app.add_middleware(
 )
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+@app.on_event("startup")
+async def startup():
+    await database.connect()
 
 
-@app.get('/')
-def read_root():
-    return {'Hello': 'World'}
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
 
 
-@app.get('/users')
-def read_users(db: Session = Depends(get_db)):
-    return db.query(models.User).all()
+@app.get("/users/", response_model=t.List[schemas.User])
+async def read_users():
+    query = models.users.select()
+    return await database.fetch_all(query)
 
 
-@app.get('/events')
-def read_events(db: Session = Depends(get_db)):
-    return db.query(models.Event).all()
+@app.post("/users/", response_model=schemas.User)
+async def create_user(user: schemas.UserIn):
+    query = models.users.insert().values(username=user.username, password=user.password)
+    last_record_id = await database.execute(query)
+    return {**user.dict(), "id": last_record_id}

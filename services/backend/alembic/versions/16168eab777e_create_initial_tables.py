@@ -1,8 +1,8 @@
-"""create inital tables
+"""create initial tables
 
-Revision ID: ebc9c4c814ee
-Revises: 
-Create Date: 2023-03-01 14:01:48.624537
+Revision ID: 16168eab777e
+Revises:
+Create Date: 2023-03-03 08:37:28.568565
 
 """
 from alembic import op
@@ -10,44 +10,56 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'ebc9c4c814ee'
+revision = '16168eab777e'
 down_revision = None
 branch_labels = None
 depends_on = None
 
 
 def upgrade() -> None:
-    op.create_table('users',
-        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+    op.create_table(
+        'users',
+        sa.Column(
+            'id', postgresql.UUID(), server_default=sa.text('uuid_generate_v4()'),
+            nullable=False),
         sa.Column('username', sa.String(length=128), nullable=False),
         sa.Column('password', sa.String(length=128), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('username')
     )
     op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
-    
-    op.create_table('event_types',
-        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=True),
+
+    op.create_table(
+        'event_types',
+        sa.Column(
+            'id', postgresql.UUID(), server_default=sa.text('uuid_generate_v4()'),
+            nullable=False),
+        sa.Column('user_id', postgresql.UUID(), nullable=True),
         sa.Column('type', sa.String(length=512), nullable=False),
         sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_event_types_id'), 'event_types', ['id'], unique=False)
-    
-    op.create_table('plants',
-        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=True),
+
+    op.create_table(
+        'plants',
+        sa.Column(
+            'id', postgresql.UUID(), server_default=sa.text('uuid_generate_v4()'),
+            nullable=False),
+        sa.Column('user_id', postgresql.UUID(), nullable=True),
         sa.Column('type', sa.Text(), nullable=True),
         sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_plants_id'), 'plants', ['id'], unique=False)
-    
-    op.create_table('events',
-        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column('plant_id', postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column('event_type_id', postgresql.UUID(as_uuid=True), nullable=True),
+
+    op.create_table(
+        'events',
+        sa.Column(
+            'id', postgresql.UUID(), server_default=sa.text('uuid_generate_v4()'),
+            nullable=False),
+        sa.Column('plant_id', postgresql.UUID(), nullable=True),
+        sa.Column('event_type_id', postgresql.UUID(), nullable=True),
         sa.Column('date', sa.DateTime(), nullable=True),
         sa.Column('comment', sa.Text(), nullable=True),
         sa.ForeignKeyConstraint(['event_type_id'], ['event_types.id'], ),
