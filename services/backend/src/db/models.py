@@ -24,7 +24,8 @@ class Plant(Base):
         'id', UUID(), server_default=text('uuid_generate_v4()'),
         primary_key=True, index=True)
     user_id = Column('user_id', UUID(), ForeignKey('users.id'))
-    description = Column('type', Text, nullable=True)
+    name = Column('name', String(128), nullable=False)
+    description = Column('description', Text, nullable=True)
 
 
 plants = Plant.__table__
