@@ -10,7 +10,7 @@ from .db.database import database, engine
 models.Base.metadata.create_all(bind=engine)
 
 origins = [
-    "http://localhost:8080",
+    'http://localhost:8080',
 ]
 
 app = FastAPI()
@@ -18,29 +18,29 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=['*'],
+    allow_headers=['*'],
 )
 
 
-@app.on_event("startup")
+@app.on_event('startup')
 async def startup():
     await database.connect()
 
 
-@app.on_event("shutdown")
+@app.on_event('shutdown')
 async def shutdown():
     await database.disconnect()
 
 
-@app.get("/users/", response_model=t.List[schemas.User])
+@app.get('/users/', response_model=t.List[schemas.User])
 async def read_users():
     query = models.users.select()
     return await database.fetch_all(query)
 
 
-@app.post("/users/", response_model=schemas.User)
+@app.post('/users/', response_model=schemas.User)
 async def create_user(user: schemas.UserIn):
     query = models.users.insert().values(username=user.username, password=user.password)
     last_record_id = await database.execute(query)
-    return {**user.dict(), "id": last_record_id}
+    return {**user.dict(), 'id': last_record_id}

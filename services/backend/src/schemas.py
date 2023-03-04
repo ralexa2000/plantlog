@@ -3,15 +3,13 @@ import uuid
 from pydantic import BaseModel
 
 
-class User(BaseModel):
-    id: uuid.UUID
-    username: str
-    password: str
-
-
 class UserIn(BaseModel):
     username: str
     password: str
+
+
+class User(UserIn):
+    id: uuid.UUID
 
 
 class Plant(BaseModel):
